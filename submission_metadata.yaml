@@ -1,0 +1,21 @@
+team_name: Apex Climbers
+team_leader: Pratheeka B
+team_leader_email: pratheekab.mz23@bitsathy.ac.in
+team_leader_contact_phone: 6382666255
+github_repository_url: https://github.com/reachzaki837/IntentRank-Intelligent-Candidate-Discovery-Engine
+ai_tools_declared:
+- Claude
+- Antigravity
+compute_environment_summary: Windows, CPU only, 16GB RAM
+team_members:
+- name: Vidhya S
+  email: vidhya.mz23@bitsathy.ac.in
+- name: Mohammed Zaki S
+  email: mohammedzaki.mz23@bitsathy.ac.in
+methodology_summary: 'We utilize a two-stage pipeline to rank candidates. First, we
+  precompute semantic embeddings using  sentence-transformers (all-MiniLM-L6-v2) to
+  capture deep semantic similarity between candidate experience  and the core JD concepts.
+  Second, we apply heuristic layers to evaluate technical depth, behavioral availability,  career
+  trajectory (discounting consulting-only and pure-research backgrounds), and specific
+  JD matches like  years of experience and location. The final ranking step combines
+  these signals and completes strictly within  the 5-minute CPU budget.'

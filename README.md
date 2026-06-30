@@ -57,29 +57,29 @@ This system is built specifically to close those three gaps: **outcome blindness
                           │ 2. Hard filters       │  → removes consulting-only & keyword-stuffed profiles
                           └───────────┬───────────┘     (100K → ~36K candidates remain)
                                       ▼
-                ┌─────────────────────────────────────────────────────────┐
-                │ 3. Five-layer scoring (runs on remaining pool)          │
-                │    • Semantic technical alignment      35%              │
-                │    • Skill depth                       25%              │
-                │    • Behavioral availability           20%              │
-                │    • Career trajectory                 15%              │
-                │    • JD-specific fit                   5%               │
-                └───────────────────────┬─────────────────────────────────┘
-                                        ▼
-                         ┌────────────────────────┐
-                         │ 4. Composite score &   │
-                         │    rank top 100        │
-                         └────────────┬───────────┘
-                                      ▼
-                         ┌────────────────────────┐
-                         │ 5. Evidence-grounded   │
-                         │    reasoning per row   │
-                         └────────────┬───────────┘
-                                      ▼
-                         ┌────────────────────────┐
-                         │ 6. Validate & write    │
-                         │    submission.csv      │
-                         └────────────────────────┘
+               ┌─────────────────────────────────────────────────┐
+               │ 3. Five-layer scoring (runs on remaining pool)  │
+               │    • Semantic technical alignment      35%      │
+               │    • Skill depth                       25%      │
+               │    • Behavioral availability           20%      │
+               │    • Career trajectory                 15%      │
+               │    • JD-specific fit                   5%       │
+               └────────────────────┬────────────────────────────┘
+                                    ▼
+                        ┌────────────────────────┐
+                        │ 4. Composite score &   │
+                        │    rank top 100        │
+                        └────────────┬───────────┘
+                                     ▼
+                        ┌────────────────────────┐
+                        │ 5. Evidence-grounded   │
+                        │    reasoning per row   │
+                        └────────────┬───────────┘
+                                     ▼
+                        ┌────────────────────────┐
+                        │ 6. Validate & write    │
+                        │    submission.csv      │
+                        └────────────────────────┘
 ```
 
 **Verified runtime:** 19 seconds for the full 100,000-candidate pipeline (TF-IDF fallback mode, CPU-only sandbox). Well within the 5-minute constraint. Runtime with real sentence-transformer embeddings will be somewhat higher but is expected to remain comfortably under budget — confirm on your own hardware before final submission.

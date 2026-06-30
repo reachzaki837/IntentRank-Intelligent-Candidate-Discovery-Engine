@@ -138,7 +138,7 @@ def main():
     and exports the technical alignment scores to a JSON file.
     """
     parser = argparse.ArgumentParser()
-    parser.add_argument("--candidates", type=str, default="[PUB] India_runs_data_and_ai_challenge/India_runs_data_and_ai_challenge/candidates.jsonl")
+    parser.add_argument("--candidates", type=str, default="./candidates.jsonl")
     parser.add_argument("--out", type=str, default="precomputed_scores.json")
     args = parser.parse_args()
     

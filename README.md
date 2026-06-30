@@ -7,6 +7,16 @@ A candidate ranking system that evaluates fit the way a strong recruiter would �
 
 ---
 
+## 🔗 Live Sandbox
+
+**Run the full ranking pipeline end-to-end (no local setup required):**
+
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1LP-1sjpCXTNqpLh1QlZbX2Q9aMMUErr7?usp=sharing)
+
+The notebook includes a small-sample cell (≤ 100 synthetic candidates) at the top that runs the complete precompute → rank pipeline and produces a ranked CSV output — no precomputed file needed.
+
+---
+
 ## Table of Contents
 
 - [Why this exists](#why-this-exists)
@@ -92,16 +102,21 @@ pip install sentence-transformers scikit-learn numpy pandas
 ### 2. Generate Embeddings (Pre-computation)
 Run this command first. It can take ~6-10 minutes on a CPU depending on hardware.
 ```bash
-python precompute.py --candidates "./[PUB] India_runs_data_and_ai_challenge/India_runs_data_and_ai_challenge/candidates.jsonl" --out precomputed_scores.json
+python precompute.py --candidates ./candidates.jsonl --out precomputed_scores.json
 ```
+
+> **Note:** If your data lives in the original nested folder, pass the full path explicitly:
+> `python precompute.py --candidates "./[PUB] India_runs_data_and_ai_challenge/India_runs_data_and_ai_challenge/candidates.jsonl" --out precomputed_scores.json`
 
 ### 3. Generate Submission CSV (Official Ranking Step)
 **Run this single command to reproduce our submission.** It completes in < 5 seconds, easily passing the 5-minute strict runtime limit.
 ```bash
-python rank.py --candidates "./[PUB] India_runs_data_and_ai_challenge/India_runs_data_and_ai_challenge/candidates.jsonl" --out ./submission.csv
+python rank.py --candidates ./candidates.jsonl --out ./submission.csv
 ```
 
-*Note: The included `notebooks/IntentRank_Candidate_Ranker.ipynb` is our research and exploration sandbox. For final hackathon verification, please use the two Python scripts above.*
+> **Portal upload note:** The portal requires the CSV filename to match your registered participant ID. Rename the file before uploading: `submission.csv`. The repository copy (`submission.csv`) is fine as-is.
+
+*Note: The included `notebooks/IntentRank_Candidate_Ranker.ipynb` is our research and exploration sandbox, and is also available as a [hosted Colab](https://colab.research.google.com/drive/1LP-1sjpCXTNqpLh1QlZbX2Q9aMMUErr7?usp=sharing). For final hackathon verification, please use the two Python scripts above.*
 
 ---
 

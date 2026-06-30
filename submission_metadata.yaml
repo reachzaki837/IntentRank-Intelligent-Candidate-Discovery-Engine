@@ -1,21 +1,57 @@
 team_name: Apex Climbers
-team_leader: Pratheeka B
-team_leader_email: pratheekab.mz23@bitsathy.ac.in
-team_leader_contact_phone: 6382666255
-github_repository_url: https://github.com/reachzaki837/IntentRank-Intelligent-Candidate-Discovery-Engine
-ai_tools_declared:
-- Claude
-- Antigravity
-compute_environment_summary: Windows, CPU only, 16GB RAM
+
+primary_contact:
+  name: Pratheeka B
+  email: pratheekab.mz23@bitsathy.ac.in
+  phone: "6382666255"
+
 team_members:
-- name: Vidhya S
-  email: vidhya.mz23@bitsathy.ac.in
-- name: Mohammed Zaki S
-  email: mohammedzaki.mz23@bitsathy.ac.in
-methodology_summary: 'We utilize a two-stage pipeline to rank candidates. First, we
-  precompute semantic embeddings using  sentence-transformers (all-MiniLM-L6-v2) to
-  capture deep semantic similarity between candidate experience  and the core JD concepts.
-  Second, we apply heuristic layers to evaluate technical depth, behavioral availability,  career
+  - name: Vidhya S
+    email: vidhya.mz23@bitsathy.ac.in
+  - name: Mohammed Zaki S
+    email: mohammedzaki.mz23@bitsathy.ac.in
+
+github_repo: https://github.com/reachzaki837/IntentRank-Intelligent-Candidate-Discovery-Engine
+
+sandbox_link: https://colab.research.google.com/drive/1LP-1sjpCXTNqpLh1QlZbX2Q9aMMUErr7?usp=sharing
+
+reproduce_command: >
+  python precompute.py --candidates ./candidates.jsonl --out precomputed_scores.json &&
+  python rank.py --candidates ./candidates.jsonl --out submission.csv
+
+compute:
+  platform: Windows 11 / Ubuntu-compatible
+  cpu_cores: 8
+  ram_gb: 16
+  python_version: "3.11.9"
+  os: Windows
+  uses_gpu_for_inference: false
+  has_network_during_ranking: false
+  pre_computation_required: true
+  pre_computation_time_minutes: 10
+
+ai_tools_used:
+  - Claude
+  - Antigravity
+
+ai_usage_summary: >
+  Claude (Anthropic) and Antigravity were used for pair-programming assistance
+  during development: iterating on scoring heuristics, debugging the two-stage
+  pipeline architecture, and drafting the methodology summary. All ranking logic,
+  data analysis, and final design decisions were made by the team.
+
+methodology_summary: >
+  We utilize a two-stage pipeline to rank candidates. First, we precompute semantic
+  embeddings using sentence-transformers (all-MiniLM-L6-v2) to capture deep semantic
+  similarity between candidate experience and the core JD concepts. Second, we apply
+  heuristic layers to evaluate technical depth, behavioral availability, career
   trajectory (discounting consulting-only and pure-research backgrounds), and specific
-  JD matches like  years of experience and location. The final ranking step combines
-  these signals and completes strictly within  the 5-minute CPU budget.'
+  JD matches like years of experience and location. The final ranking step combines
+  these signals and completes strictly within the 5-minute CPU budget.
+
+declarations:
+  read_submission_spec: true
+  code_is_original_work: true
+  no_collusion: true
+  honeypot_check_done: true
+  reproduction_tested: true

@@ -338,27 +338,37 @@ def main():
         if keep:
             kept.append(c)
 
+    # --- Hoist fallback model load BEFORE the loop ---
+    # Detect in advance which candidates are missing from the precomputed file.
+    # If any are missing (e.g. a fresh sandbox sample), load the model exactly ONCE here
+    # rather than reloading the ~80MB model on every loop iteration.
+    _missing_ids = {c["candidate_id"] for c in kept if c["candidate_id"] not in precomputed_scores}
+    _fallback_model = None
+    _jd_emb_fallback = None
+    if _missing_ids:
+        try:
+            from sentence_transformers import SentenceTransformer
+            print(f"Loading fallback SentenceTransformer for {len(_missing_ids)} unprecomputed candidate(s)...")
+            _fallback_model = SentenceTransformer("all-MiniLM-L6-v2")
+            _jd_emb_fallback = _fallback_model.encode([JD_CORE_CONCEPT_TEXT], normalize_embeddings=True)
+            print("Fallback model loaded.")
+        except ImportError:
+            print("Warning: sentence-transformers not available; using 0.5 default for missing candidates.")
+
     all_results = []
     for cand in kept:
         cid = cand["candidate_id"]
-        # If running a small sample sandbox test, the candidate might not be in the precomputed file!
-        # Wait, the spec says the sandbox must accept a small sample and run end-to-end. 
-        # If we just do lookups, a NEW sandbox sample will fail because it's not in the precomputed JSON.
-        # So rank.py should fallback to live embeddings if the score isn't found!
         tech_score = precomputed_scores.get(cid)
-        
+
         if tech_score is None:
-            # Fallback to computing on the fly for sandbox test
-            try:
-                from sentence_transformers import SentenceTransformer
-                embed_model = SentenceTransformer("all-MiniLM-L6-v2")
-                jd_emb = embed_model.encode([JD_CORE_CONCEPT_TEXT], normalize_embeddings=True)
+            # Use the single pre-loaded fallback model; never reload inside the loop
+            if _fallback_model is not None:
                 c_text = build_candidate_text(cand)
-                c_emb = embed_model.encode([c_text], normalize_embeddings=True)
-                tech_score = float((c_emb @ jd_emb.T)[0][0])
-            except ImportError:
-                tech_score = 0.5 # Safe fallback if model missing in strict environment
-            
+                c_emb = _fallback_model.encode([c_text], normalize_embeddings=True)
+                tech_score = float((c_emb @ _jd_emb_fallback.T)[0][0])
+            else:
+                tech_score = 0.5  # Safe fallback if sentence-transformers unavailable
+
         scores = {
             "technical":   float(tech_score),
             "skill_depth": score_skill_depth(cand),

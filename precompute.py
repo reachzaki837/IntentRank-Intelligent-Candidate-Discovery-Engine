@@ -55,9 +55,17 @@ AI_DEPTH_SKILLS = {
 }
 
 def _is_consulting_company(company_name: str) -> bool:
+    """
+    Checks if a company name contains a known consulting firm as a whole word.
+    Used to discount candidates with purely consulting/staffing backgrounds.
+    """
     return bool(_CF_PATTERN.search(company_name))
 
 def is_honeypot(candidate: dict) -> bool:
+    """
+    Returns True if the candidate profile contains internally impossible data,
+    such as claiming expert proficiency with 0 months of experience.
+    """
     skills = candidate.get("skills", [])
     for sk in skills:
         if sk.get("proficiency") in ("advanced", "expert") and sk.get("duration_months", 1) == 0:
@@ -80,6 +88,10 @@ def is_honeypot(candidate: dict) -> bool:
     return False
 
 def hard_filter(candidate: dict) -> tuple[bool, str]:
+    """
+    Applies aggressive heuristic filters to drop low-quality candidates before
+    expensive embedding computation. Returns (keep_boolean, exclusion_reason).
+    """
     if is_honeypot(candidate):
         return False, "honeypot"
     profile = candidate.get("profile", {})
@@ -99,6 +111,10 @@ def hard_filter(candidate: dict) -> tuple[bool, str]:
     return True, ""
 
 def build_candidate_text(candidate: dict) -> str:
+    """
+    Constructs a weighted text representation of a candidate's profile for semantic matching.
+    Current roles and high-confidence skills are given more textual weight.
+    """
     profile = candidate.get("profile", {})
     career = candidate.get("career_history", [])
     skills = candidate.get("skills", [])
@@ -116,6 +132,11 @@ def build_candidate_text(candidate: dict) -> str:
     return " ".join(parts).lower().strip()
 
 def main():
+    """
+    Main execution pipeline for Phase 1: Pre-computation.
+    Loads candidates, applies hard filters, generates semantic embeddings,
+    and exports the technical alignment scores to a JSON file.
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument("--candidates", type=str, default="[PUB] India_runs_data_and_ai_challenge/India_runs_data_and_ai_challenge/candidates.jsonl")
     parser.add_argument("--out", type=str, default="precomputed_scores.json")

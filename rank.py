@@ -97,6 +97,11 @@ def hard_filter(candidate: dict) -> tuple[bool, str]:
     return True, ""
 
 def score_skill_depth(candidate: dict) -> float:
+    """
+    Evaluates the depth and demonstrated proficiency of AI/ML skills.
+    Rewards sustained usage (duration), endorsements, and formal assessments,
+    rather than just counting keywords. Returns a score between 0.0 and 1.0.
+    """
     skills = candidate.get("skills", [])
     sig = candidate.get("redrob_signals", {})
     raw_assessment = sig.get("skill_assessment_scores", {}) or {}
@@ -121,6 +126,11 @@ def score_skill_depth(candidate: dict) -> float:
     return min(1.0, depth_total / 10.0)
 
 def score_behavioral_availability(candidate: dict) -> float:
+    """
+    Evaluates how likely a candidate is to engage and be hired.
+    Factors in recency of activity, open-to-work flags, recruiter response rate,
+    and notice period. Returns a score between 0.0 and 1.0.
+    """
     sig = candidate.get("redrob_signals", {})
     score = 0.0
     last_active_s = sig.get("last_active_date", "")
@@ -144,6 +154,12 @@ def score_behavioral_availability(candidate: dict) -> float:
     return min(1.0, score)
 
 def score_career_trajectory(candidate: dict) -> float:
+    """
+    Evaluates career progression and production experience.
+    Weights recent roles more heavily, penalizes purely academic/research backgrounds
+    with no production signals, and discounts title-chasing (low avg duration).
+    Returns a score between 0.0 and 1.0.
+    """
     career = candidate.get("career_history", [])
     if not career: return 0.3
     def sort_key(h): return "9999-99-99" if h.get("is_current") else h.get("start_date", "0000-00-00")
@@ -169,6 +185,12 @@ def score_career_trajectory(candidate: dict) -> float:
     return min(1.0, trajectory)
 
 def score_jd_specific(candidate: dict) -> float:
+    """
+    Evaluates specific constraints derived from the Job Description.
+    Includes target years of experience (5-9 years preferred), location alignment,
+    and GitHub activity as a secondary technical signal.
+    Returns a score between 0.0 and 1.0.
+    """
     profile = candidate.get("profile", {})
     sig = candidate.get("redrob_signals", {})
     score = 0.0
@@ -198,6 +220,11 @@ def composite_score(scores: dict) -> float:
     return sum(WEIGHTS[k] * scores[k] for k in WEIGHTS)
 
 def generate_reasoning_dynamic(candidate: dict, scores: dict, rank: int, raw_score: float) -> str:
+    """
+    Generates a unique, evidence-based reasoning string explaining the candidate's score.
+    Uses deterministic hashing for structural variation based on rank to avoid
+    penalties for templated reasoning in manual review.
+    """
     profile = candidate.get("profile", {})
     skills = candidate.get("skills", [])
     sig = candidate.get("redrob_signals", {})

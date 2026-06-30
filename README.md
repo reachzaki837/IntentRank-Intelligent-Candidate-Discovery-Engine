@@ -46,40 +46,40 @@ This system is built specifically to close those three gaps: **outcome blindness
 ## System overview
 
 ```
-candidates.jsonl (100K records)
-        │
-        ▼
-┌───────────────────────┐
-│ 1. Honeypot detection │  → flags internally impossible profiles
-└───────────┬───────────┘
-            ▼
-┌───────────────────────┐
-│ 2. Hard filters        │  → removes consulting-only & keyword-stuffed profiles
-└───────────┬───────────┘     (100K → ~36K candidates remain)
-            ▼
-┌─────────────────────────────────────────────────────────┐
-│ 3. Five-layer scoring (runs on remaining pool)           │
-│    • Semantic technical alignment      35%               │
-│    • Skill depth                       25%               │
-│    • Behavioral availability           20%               │
-│    • Career trajectory                 15%               │
-│    • JD-specific fit                    5%                │
-└───────────────────────┬───────────────────────────────────┘
-                         ▼
-            ┌────────────────────────┐
-            │ 4. Composite score &   │
-            │    rank top 100        │
-            └────────────┬───────────┘
-                         ▼
-            ┌────────────────────────┐
-            │ 5. Evidence-grounded   │
-            │    reasoning per row   │
-            └────────────┬───────────┘
-                         ▼
-            ┌────────────────────────┐
-            │ 6. Validate & write    │
-            │    submission.csv      │
-            └────────────────────────┘
+                          candidates.jsonl (100K records)
+                                     │
+                                     ▼
+                          ┌───────────────────────┐
+                          │ 1. Honeypot detection │  → flags internally impossible    profiles
+                          └───────────┬───────────┘
+                                      ▼
+                          ┌───────────────────────┐
+                          │ 2. Hard filters       │  → removes consulting-only & keyword-stuffed profiles
+                          └───────────┬───────────┘     (100K → ~36K candidates remain)
+                                      ▼
+                ┌─────────────────────────────────────────────────────────┐
+                │ 3. Five-layer scoring (runs on remaining pool)          │
+                │    • Semantic technical alignment      35%              │
+                │    • Skill depth                       25%              │
+                │    • Behavioral availability           20%              │
+                │    • Career trajectory                 15%              │
+                │    • JD-specific fit                   5%               │
+                └───────────────────────┬─────────────────────────────────┘
+                                        ▼
+                         ┌────────────────────────┐
+                         │ 4. Composite score &   │
+                         │    rank top 100        │
+                         └────────────┬───────────┘
+                                      ▼
+                         ┌────────────────────────┐
+                         │ 5. Evidence-grounded   │
+                         │    reasoning per row   │
+                         └────────────┬───────────┘
+                                      ▼
+                         ┌────────────────────────┐
+                         │ 6. Validate & write    │
+                         │    submission.csv      │
+                         └────────────────────────┘
 ```
 
 **Verified runtime:** 19 seconds for the full 100,000-candidate pipeline (TF-IDF fallback mode, CPU-only sandbox). Well within the 5-minute constraint. Runtime with real sentence-transformer embeddings will be somewhat higher but is expected to remain comfortably under budget — confirm on your own hardware before final submission.
@@ -150,7 +150,6 @@ Before submitting, verifies: exactly 100 rows, zero duplicate candidate IDs, str
 .
 ├── README.md                          ← this file
 ├── IntentRank_Candidate_Ranker.ipynb  ← full annotated pipeline, 16 sections
-├── rank.py                            ← standalone script version of the same pipeline
 ├── submission.csv                     ← final ranked output (top 100, generated)
 ├── IntentRank_Explainer.pdf           ← methodology explainer deck (problem, solution, novelty)
 └── submission_metadata.yaml           ← team & approach metadata for the hackathon submission
@@ -173,6 +172,7 @@ pip install sentence-transformers scikit-learn numpy pandas jupyter
 `sentence-transformers` is optional but strongly recommended — it enables real semantic embeddings (`all-MiniLM-L6-v2`, ~80MB, CPU-friendly) instead of the TF-IDF fallback. The pipeline detects automatically which is available and prints which mode it's running in.
 
 Place the released `candidates.jsonl` in the project root (or update the path in the notebook/script).
+[Download the dataset here](https://drive.google.com/file/d/1HhzOL21jiEWfv5sd2xM6LwDAb9onRPuU/view?usp=sharing)
 
 ---
 
@@ -199,8 +199,8 @@ Both produce an identical `submission.csv`.
 
 ```csv
 candidate_id,rank,score,reasoning
-CAND_0011687,1,1.0000,"Senior NLP Engineer at Niramai, 7.8 yrs exp, Indore, Madhya Pradesh; relevant skills: TensorFlow, FAISS, Embeddings, LangChain; actively engaged (open to work, 89% response rate); notice ≤30 days; strong GitHub activity (76.3/100)."
-CAND_0086022,2,0.9876,"Senior Applied Scientist at Sarvam AI, 5.3 yrs exp, Kolkata, West Bengal; relevant skills: Vector Search, Recommendation Systems, Fine-tuning LLMs, Pinecone; actively engaged (open to work, 55% response rate); notice ≤30 days; strong GitHub activity..."
+CAND_0036184,1,1.0,"Recommendation Systems Engineer at CRED, 6.0 yrs exp, Trivandrum, Kerala; relevant skills: FAISS, Hugging Face Transformers, LangChain, Semantic Search; actively engaged (open to work, 90% response rate); notice ≤30 days."
+CAND_0011687,2,0.9158,"Senior NLP Engineer at Niramai, 7.8 yrs exp, Indore, Madhya Pradesh; relevant skills: TensorFlow, FAISS, Embeddings, LangChain; actively engaged (open to work, 89% response rate); notice ≤30 days; strong GitHub activity (76.3/100)."
 ...
 ```
 
